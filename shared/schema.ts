@@ -1,18 +1,20 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+// Stream Chat User Authentication Schema
+export const streamUserSchema = z.object({
+  userId: z.string().min(1, "User ID is required"),
+  userToken: z.string().min(1, "User token is required"),
+  userName: z.string().optional(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export type StreamUser = z.infer<typeof streamUserSchema>;
+
+// Channel creation schema
+export const createChannelSchema = z.object({
+  channelId: z.string().min(1, "Channel ID is required"),
+  channelName: z.string().min(1, "Channel name is required"),
+  channelType: z.enum(["messaging", "team", "livestream"]).default("messaging"),
+  members: z.array(z.string()).optional(),
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export type CreateChannel = z.infer<typeof createChannelSchema>;
