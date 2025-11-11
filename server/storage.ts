@@ -1,37 +1,17 @@
-import { type User, type InsertUser } from "@shared/schema";
-import { randomUUID } from "crypto";
+import { type StreamUser } from "@shared/schema";
 
-// modify the interface with any CRUD methods
-// you might need
+// Storage interface for Stream Chat application
+// Note: Stream Chat handles most backend storage,
+// this is kept for potential future local state needs
 
 export interface IStorage {
-  getUser(id: string): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  // Stream Chat handles user management
+  // This interface can be extended for app-specific data if needed
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-
   constructor() {
-    this.users = new Map();
-  }
-
-  async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
-  }
-
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    // Reserved for future local state management
   }
 }
 

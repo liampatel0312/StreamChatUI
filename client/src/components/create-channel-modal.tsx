@@ -45,7 +45,7 @@ export function CreateChannelModal({ client, onClose }: CreateChannelModalProps)
       const channel = client.channel(data.channelType, data.channelId, {
         name: data.channelName,
         members: data.members && data.members.length > 0 ? [...data.members, client.userID!] : [client.userID!],
-      });
+      } as any);
 
       await channel.create();
       await channel.watch();

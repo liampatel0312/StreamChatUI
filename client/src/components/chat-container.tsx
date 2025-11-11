@@ -10,6 +10,7 @@ import {
   Thread,
   Window,
   LoadingIndicator,
+  useChannelStateContext,
 } from "stream-chat-react";
 import "stream-chat-react/dist/css/v2/index.css";
 import { Button } from "@/components/ui/button";
@@ -72,14 +73,13 @@ export function ChatContainer({ client, onLogout }: ChatContainerProps) {
                 sort={sort}
                 options={options}
                 showChannelSearch
-                Preview={(props) => <ChannelPreview {...props} />}
+                Preview={(props) => <ChannelPreview {...props} setActiveChannel={setActiveChannel} activeChannel={activeChannel} />}
                 LoadingIndicator={() => (
                   <div className="flex items-center justify-center p-8">
                     <LoadingIndicator />
                   </div>
                 )}
                 setActiveChannelOnMount={false}
-                onSelect={(channel) => setActiveChannel(channel)}
               />
             </div>
 
@@ -137,13 +137,15 @@ export function ChatContainer({ client, onLogout }: ChatContainerProps) {
 
 // Custom Channel Preview Component
 function ChannelPreview(props: any) {
-  const { channel, setActiveChannel, activeChannel } = props;
+  const { channel, setActiveChannel, activeChannel, watchers } = props;
   const isActive = activeChannel?.id === channel.id;
   const unreadCount = channel.countUnread();
   const lastMessage = channel.state.messages[channel.state.messages.length - 1];
 
   const handleSelect = () => {
-    setActiveChannel(channel);
+    if (setActiveChannel) {
+      setActiveChannel(channel);
+    }
   };
 
   return (
@@ -186,7 +188,7 @@ function CustomChannelHeader({
   onToggleSidebar?: () => void;
   showSidebarToggle?: boolean;
 }) {
-  const { channel } = Channel.useChannelContext();
+  const { channel } = useChannelStateContext();
   const memberCount = Object.keys(channel?.state?.members || {}).length;
 
   return (
